@@ -6,7 +6,7 @@ namespace ToDo.Domain.Repositories
     {
         Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
 
-        Task<T?> GetAsync(long id, CancellationToken cancellationToken = default);
+        Task<T?> GetAsync(int id, CancellationToken cancellationToken = default);
 
         void Add(T entity);
 

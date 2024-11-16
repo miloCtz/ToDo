@@ -4,8 +4,7 @@ namespace ToDo.Domain.Entities
 {
     public sealed class ToDoTask : Entity
     {
-        private ToDoTask(long id, string title)
-            : base(id)
+        private ToDoTask(string title)
         {
             Title = title;
         }
@@ -18,9 +17,14 @@ namespace ToDo.Domain.Entities
             IsDone = true;
         }
 
-        public static ToDoTask Create(long id, string title)
+        public void UpdateTitle(string title)
         {
-            return new ToDoTask(id, title);
+            Title = title;
+        }
+
+        public static ToDoTask Create(string title)
+        {
+            return new ToDoTask(title);
         }
     }
 }

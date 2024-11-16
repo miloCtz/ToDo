@@ -2,7 +2,7 @@
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Repositories;
 
-namespace ToDo.Application.ToDoTask.Queries.GetToDoTask;
+namespace ToDo.Application.ToDoTasks.Queries.GetToDoTask;
 internal sealed class GetTodoTaskByIdQueryHandler
     : IQueryHandler<GetToDoTaskByIdQuery, ToDoTaskResponse>
 {

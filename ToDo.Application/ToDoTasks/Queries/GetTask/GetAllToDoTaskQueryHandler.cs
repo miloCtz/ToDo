@@ -1,9 +1,8 @@
 ﻿using DotNext;
 using ToDo.Application.Abstractions.Messaging;
-using ToDo.Application.ToDoTask.Queries.GetToDoTask;
 using ToDo.Domain.Repositories;
 
-namespace ToDo.Application.ToDoTask.Queries.GetToDoTas;
+namespace ToDo.Application.ToDoTasks.Queries.GetToDoTask;
 
 internal sealed class GetAllToDoTaskQueryHandler
     : IQueryHandler<GetAllToDoTaskQuery, ToDoTaskAllResponse>

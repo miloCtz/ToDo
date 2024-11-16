@@ -1,10 +1,8 @@
 ﻿namespace ToDo.Domain.Primitives
 {
     public abstract class Entity : IEquatable<Entity>
-    {
-        protected Entity(long id) => Id = id;
-      
-        public long Id { get; private init; }
+    {       
+        public int Id { get; set; }
 
         public static bool operator ==(Entity? left, Entity? right) =>
             left is not null && right is not null && left.Equals(right);
