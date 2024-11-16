@@ -11,20 +11,20 @@ internal sealed class CompleteToDoItemCommandHandler :
         ICommandHandler<CompleteToDoItemCommand, Unit>
 {
 
-    private readonly IToDoItemRepository _ToDoItemRepository;
+    private readonly IToDoItemRepository _toDoItemRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public CompleteToDoItemCommandHandler(IUnitOfWork unitOfWork, IToDoItemRepository ToDoItemRepository)
     {
         _unitOfWork = unitOfWork;
-        _ToDoItemRepository = ToDoItemRepository;
+        _toDoItemRepository = ToDoItemRepository;
     }
 
     public async Task<Result<Unit>> Handle(CompleteToDoItemCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var toDoItem = await _ToDoItemRepository.GetAsync(request.ToDoItemId);
+            var toDoItem = await _toDoItemRepository.GetAsync(request.ToDoItemId);
 
             if (toDoItem is null)
             {
@@ -37,7 +37,7 @@ internal sealed class CompleteToDoItemCommandHandler :
             }
 
             toDoItem.Complete();
-            _ToDoItemRepository.Add(toDoItem);
+            _toDoItemRepository.Add(toDoItem);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

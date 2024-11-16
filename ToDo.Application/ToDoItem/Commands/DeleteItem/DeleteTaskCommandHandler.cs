@@ -19,16 +19,23 @@ public sealed class DeleteTaskCommandHandler
 
     public async Task<Result<Unit>> Handle(DeleteTaskCommand request, CancellationToken cancellationToken)
     {
-        var ToDoItem = await _ToDoItemRepository.GetAsync(request.ToDoItemId);
-
-        if (ToDoItem is null)
+        try
         {
-            return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
-        }
+            var ToDoItem = await _ToDoItemRepository.GetAsync(request.ToDoItemId);
 
-        _ToDoItemRepository.Delete(ToDoItem);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return Unit.Value;
+            if (ToDoItem is null)
+            {
+                return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
+            }
+
+            _ToDoItemRepository.Delete(ToDoItem);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return Unit.Value;
+        }
+        catch (Exception ex)
+        {
+            return new Result<Unit>(ex);
+        }
     }
 }
 

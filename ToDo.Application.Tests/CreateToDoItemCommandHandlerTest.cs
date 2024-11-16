@@ -37,7 +37,6 @@ namespace ToDo.Application.Tests
         public async Task Handle_Should_Fail_ThrowsException()
         {
             //Arrange
-
             var exception = new Exception("Test");
             _repositoryMock.Setup(
                     x => x.Add(It.IsAny<ToDoItem>()))
