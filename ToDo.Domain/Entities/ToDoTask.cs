@@ -9,6 +9,10 @@ namespace ToDo.Domain.Entities
             Title = title;
         }
 
+        public ToDoItem()
+        {            
+        }
+
         public string Title { get; private set; }
         public bool IsDone { get; private set; }
 

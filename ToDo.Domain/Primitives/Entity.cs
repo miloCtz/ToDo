@@ -1,7 +1,11 @@
 ﻿namespace ToDo.Domain.Primitives
 {
     public abstract class Entity : IEquatable<Entity>
-    {       
+    {
+        protected Entity()
+        {            
+        }
+
         public int Id { get; set; }
 
         public static bool operator ==(Entity? left, Entity? right) =>

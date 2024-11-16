@@ -2,9 +2,9 @@
 
 namespace ToDo.Domain.Repositories
 {
-    public interface IRepository<T> where T : Entity
+    public interface IRepository<T> where T : Entity, new()
     {
-        Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<List<T>> GetAllAsync(CancellationToken cancellationToken = default);
 
         Task<T?> GetAsync(int id, CancellationToken cancellationToken = default);
 

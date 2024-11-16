@@ -16,7 +16,7 @@ namespace ToDo.Application.Tests
 
             _repositoryMock.Setup(
                 x => x.GetAllAsync(It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(toDoItems.AsEnumerable()));
+                .Returns(Task.FromResult(toDoItems));
 
             var command = new GetAllToDoItemQuery();
             var handler = new GetAllToDoItemQueryHandler(_repositoryMock.Object);
