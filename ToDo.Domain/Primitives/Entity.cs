@@ -3,11 +3,7 @@
     public abstract class Entity : IEquatable<Entity>
     {
         protected Entity(long id) => Id = id;
-
-        protected Entity()
-        {
-        }
-
+      
         public long Id { get; private init; }
 
         public static bool operator ==(Entity? left, Entity? right) =>
