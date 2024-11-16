@@ -353,6 +353,5 @@ MigrationBackup/
 db/
 
 Debug/
-/ToDo.Domain/
 /ToDo.Domain/obj/Debug/net8.0/
 /ToDo.Domain/obj/Debug/net8.0/ToDo.Domain.AssemblyInfo.cs

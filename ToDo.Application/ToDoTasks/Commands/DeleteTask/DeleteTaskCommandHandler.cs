@@ -1,5 +1,6 @@
 ﻿using DotNext;
 using ToDo.Application.Abstractions.Messaging;
+using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
 using ToDo.Domain.Shared;
 
@@ -22,9 +23,7 @@ public sealed class DeleteTaskCommandHandler
 
         if (toDoTask is null)
         {
-            //TODO: error validation
-            var error = new ArgumentException();
-            return new Result<Unit>(error);
+            return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoTaskId));
         }
 
         _toDoTaskRepository.Delete(toDoTask);

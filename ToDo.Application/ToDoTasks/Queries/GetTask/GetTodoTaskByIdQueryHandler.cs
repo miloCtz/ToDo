@@ -1,5 +1,6 @@
 ﻿using DotNext;
 using ToDo.Application.Abstractions.Messaging;
+using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
 
 namespace ToDo.Application.ToDoTasks.Queries.GetToDoTask;
@@ -16,9 +17,7 @@ internal sealed class GetTodoTaskByIdQueryHandler
 
         if (toDoTask is null)
         {
-            //TODO: domain erro
-            var error = new ArgumentException();
-            return new Result<ToDoTaskResponse>(error);
+            return new Result<ToDoTaskResponse>(DomainErrors.ToDoList.NotFound(request.Id));
         }
 
         return new ToDoTaskResponse(toDoTask.Id, toDoTask.Title, toDoTask.IsDone);

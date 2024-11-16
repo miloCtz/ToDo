@@ -1,6 +1,7 @@
 ﻿using DotNext;
 
 using ToDo.Application.Abstractions.Messaging;
+using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
 using ToDo.Domain.Shared;
 
@@ -24,10 +25,8 @@ internal sealed class CompleteToDoTaskCommandHandler :
         var toDoTask = await _toDoTaskRepository.GetAsync(request.ToDoTaskId);
 
         if (toDoTask is null)
-        {
-            //TODO: error validation
-            var error = new ArgumentException();
-            return new Result<Unit>(error);
+        {            
+            return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoTaskId));
         }
 
         toDoTask.Complete();
