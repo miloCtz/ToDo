@@ -2,9 +2,9 @@
 
 namespace ToDo.Domain.Entities
 {
-    public sealed class ToDoTask : Entity
+    public sealed class ToDoItem : Entity
     {
-        private ToDoTask(string title)
+        private ToDoItem(string title)
         {
             Title = title;
         }
@@ -22,9 +22,9 @@ namespace ToDo.Domain.Entities
             Title = title;
         }
 
-        public static ToDoTask Create(string title)
+        public static ToDoItem Create(string title)
         {
-            return new ToDoTask(title);
+            return new ToDoItem(title);
         }
     }
 }

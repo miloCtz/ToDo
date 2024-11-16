@@ -4,29 +4,29 @@ using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
 using ToDo.Domain.Shared;
 
-namespace ToDo.Application.ToDoTasks.Commands.DeleteTask;
+namespace ToDo.Application.ToDoItems.Commands.DeleteTask;
 public sealed class DeleteTaskCommandHandler
     : ICommandHandler<DeleteTaskCommand, Unit>
 {
-    private readonly IToDoTaskRepository _toDoTaskRepository;
+    private readonly IToDoItemRepository _ToDoItemRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteTaskCommandHandler(IUnitOfWork unitOfWork, IToDoTaskRepository toDoTaskRepository)
+    public DeleteTaskCommandHandler(IUnitOfWork unitOfWork, IToDoItemRepository ToDoItemRepository)
     {
         _unitOfWork = unitOfWork;
-        _toDoTaskRepository = toDoTaskRepository;
+        _ToDoItemRepository = ToDoItemRepository;
     }
 
     public async Task<Result<Unit>> Handle(DeleteTaskCommand request, CancellationToken cancellationToken)
     {
-        var toDoTask = await _toDoTaskRepository.GetAsync(request.ToDoTaskId);
+        var ToDoItem = await _ToDoItemRepository.GetAsync(request.ToDoItemId);
 
-        if (toDoTask is null)
+        if (ToDoItem is null)
         {
-            return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoTaskId));
+            return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
         }
 
-        _toDoTaskRepository.Delete(toDoTask);
+        _ToDoItemRepository.Delete(ToDoItem);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }

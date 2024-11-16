@@ -2,7 +2,7 @@
 
 namespace ToDo.Domain.Repositories
 {
-    public interface IToDoTaskRepository : IRepository<ToDoTask>
+    public interface IToDoItemRepository : IRepository<ToDoItem>
     {
 
     }
