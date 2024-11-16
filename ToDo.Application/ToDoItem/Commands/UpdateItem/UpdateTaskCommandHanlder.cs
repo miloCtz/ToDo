@@ -9,28 +9,36 @@ namespace ToDo.Application.ToDoItems.Commands.UpdateTask
     public sealed class UpdateTaskCommandHanlder
         : ICommandHandler<UpdateTaskCommand, Unit>
     {
-        private readonly IToDoItemRepository _ToDoItemRepository;
+        private readonly IToDoItemRepository _toDoItemRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public UpdateTaskCommandHanlder(IToDoItemRepository ToDoItemRepository, IUnitOfWork unitOfWork)
         {
-            _ToDoItemRepository = ToDoItemRepository;
+            _toDoItemRepository = ToDoItemRepository;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<Unit>> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
         {
-            var ToDoItem = await _ToDoItemRepository.GetAsync(request.ToDoItemId);
-
-            if (ToDoItem is null)
+            try
             {
-                return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
+                var ToDoItem = await _toDoItemRepository.GetAsync(request.ToDoItemId);
+
+                if (ToDoItem is null)
+                {
+                    return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
+                }
+
+                ToDoItem.UpdateTitle(request.Title);
+                _toDoItemRepository.Add(ToDoItem);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return Unit.Value;
             }
-
-            ToDoItem.UpdateTitle(ToDoItem.Title);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return Unit.Value;
+            catch (Exception ex)
+            {
+                return new Result<Unit>(ex);
+            }
         }
     }
 }

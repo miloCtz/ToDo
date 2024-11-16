@@ -2,21 +2,11 @@
 using Moq;
 using ToDo.Application.ToDoItems.Commands.CreateTask;
 using ToDo.Domain.Entities;
-using ToDo.Domain.Repositories;
 
 namespace ToDo.Application.Tests
 {
-    public class CreateToDoItemCommandHandlerTest
+    public class CreateToDoItemCommandHandlerTest : TestHandlerBase
     {
-        private readonly Mock<IToDoItemRepository> _repositoryMock;
-        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-
-        public CreateToDoItemCommandHandlerTest()
-        {
-            _repositoryMock = new();
-            _unitOfWorkMock = new();
-        }
-
         [Fact]
         public async Task Handle_Should_Success_ReturnId()
         {

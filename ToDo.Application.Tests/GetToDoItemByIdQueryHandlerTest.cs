@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using Moq;
-using ToDo.Application.ToDoItems.Commands.DeleteTask;
+using ToDo.Application.ToDoItems.Queries.GetToDoItem;
 using ToDo.Domain.Entities;
 using ToDo.Domain.Errors;
 
 namespace ToDo.Application.Tests
 {
-    public class DeleteTaskCommandHandlerTest : TestHandlerBase
+    public class GetToDoItemByIdQueryHandlerTest : TestHandlerBase
     {
         [Fact]
         public async Task Handle_Should_Success()
@@ -18,17 +18,19 @@ namespace ToDo.Application.Tests
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(toDoItem));
 
-            var command = new DeleteTaskCommand(1);
-            var handler = new DeleteTaskCommandHandler(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var command = new GetToDoItemByIdQuery(1);
+            var handler = new GetToDoItemByIdQueryHandler(_repositoryMock.Object);
 
             //Act
             var result = await handler.Handle(command, default);
 
             //Assert
             result.IsSuccessful.Should().BeTrue();
-            _repositoryMock.Verify(x => x.Delete(It.IsAny<ToDoItem>()), Times.Once);
-            _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            result.Value.Should().NotBeNull();
+            result.Value.Title.Should().Be(toDoItem.Title);
+            _repositoryMock.Verify(x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
         }
+
 
         [Fact]
         public async Task Handle_Should_Fail_ReturnItemNotFound()
@@ -38,8 +40,8 @@ namespace ToDo.Application.Tests
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(default(ToDoItem)));
 
-            var command = new DeleteTaskCommand(1);
-            var handler = new DeleteTaskCommandHandler(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var command = new GetToDoItemByIdQuery(1);
+            var handler = new GetToDoItemByIdQueryHandler(_repositoryMock.Object);
             var error = DomainErrors.ToDoList.NotFound(1);
 
             //Act
@@ -49,20 +51,20 @@ namespace ToDo.Application.Tests
             result.IsSuccessful.Should().BeFalse();
             result.Error.Should().NotBeNull();
             result.Error.Message.Should().Be(error.Message);
-            _repositoryMock.Verify(x => x.Delete(It.IsAny<ToDoItem>()), Times.Never);
-            _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+            _repositoryMock.Verify(x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
-        public async Task Handle_Should_ThrowsException()
+        public async Task Handle_Should_Fail_ThrowsException()
         {
             //Arrange
             _repositoryMock.Setup(
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
 
-            var command = new DeleteTaskCommand(1);
-            var handler = new DeleteTaskCommandHandler(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var command = new GetToDoItemByIdQuery(1);
+            var handler = new GetToDoItemByIdQueryHandler(_repositoryMock.Object);
+            var error = DomainErrors.ToDoList.NotFound(1);
 
             //Act
             var result = await handler.Handle(command, default);
@@ -71,7 +73,7 @@ namespace ToDo.Application.Tests
             result.IsSuccessful.Should().BeFalse();
             result.Error.Should().NotBeNull();
             result.Error.GetType().Should().Be(typeof(Exception));
-            _repositoryMock.Verify(x => x.Delete(It.IsAny<ToDoItem>()), Times.Never);
+            _repositoryMock.Verify(x => x.Add(It.IsAny<ToDoItem>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
     }
