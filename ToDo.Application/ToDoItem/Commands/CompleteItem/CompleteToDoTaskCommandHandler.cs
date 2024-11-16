@@ -22,19 +22,31 @@ internal sealed class CompleteToDoItemCommandHandler :
 
     public async Task<Result<Unit>> Handle(CompleteToDoItemCommand request, CancellationToken cancellationToken)
     {
-        var ToDoItem = await _ToDoItemRepository.GetAsync(request.ToDoItemId);
+        try
+        {
+            var toDoItem = await _ToDoItemRepository.GetAsync(request.ToDoItemId);
 
-        if (ToDoItem is null)
-        {            
-            return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
+            if (toDoItem is null)
+            {
+                return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
+            }
+
+            if (toDoItem.IsDone)
+            {
+                return new Result<Unit>(DomainErrors.ToDoList.IsAlreadyDone);
+            }
+
+            toDoItem.Complete();
+            _ToDoItemRepository.Add(toDoItem);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
         }
-
-        ToDoItem.Complete();
-        _ToDoItemRepository.Add(ToDoItem);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return Unit.Value;
+        catch (Exception ex)
+        {
+            return new Result<Unit>(ex);
+        }
     }
 }
 

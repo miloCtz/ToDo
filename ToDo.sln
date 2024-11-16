@@ -12,7 +12,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDo.Application", "ToDo.Application\ToDo.Application.csproj", "{76ACF4EB-C56D-4BDC-B1CB-772484C42E14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDo.Application", "ToDo.Application\ToDo.Application.csproj", "{76ACF4EB-C56D-4BDC-B1CB-772484C42E14}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6B33A61E-8BC0-4B35-AF47-D11454EB3F23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDo.Application.Tests", "ToDo.Application.Tests\ToDo.Application.Tests.csproj", "{AE7002C0-CA1A-4EAE-B25F-542DF67BDF77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +32,10 @@ Global
 		{76ACF4EB-C56D-4BDC-B1CB-772484C42E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76ACF4EB-C56D-4BDC-B1CB-772484C42E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76ACF4EB-C56D-4BDC-B1CB-772484C42E14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE7002C0-CA1A-4EAE-B25F-542DF67BDF77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE7002C0-CA1A-4EAE-B25F-542DF67BDF77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE7002C0-CA1A-4EAE-B25F-542DF67BDF77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE7002C0-CA1A-4EAE-B25F-542DF67BDF77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -35,6 +43,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{33BAAFEC-9E92-44F1-B2B0-8C06FD28C193} = {C1B32C4F-9A6C-4C52-AF95-6AA751A6F564}
 		{76ACF4EB-C56D-4BDC-B1CB-772484C42E14} = {C1B32C4F-9A6C-4C52-AF95-6AA751A6F564}
+		{AE7002C0-CA1A-4EAE-B25F-542DF67BDF77} = {6B33A61E-8BC0-4B35-AF47-D11454EB3F23}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {15813C82-E9FB-43E7-BDF5-92E21147927A}

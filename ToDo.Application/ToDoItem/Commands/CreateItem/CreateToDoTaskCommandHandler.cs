@@ -19,13 +19,18 @@ internal sealed class CreateToDoItemCommandHandler
 
     public async Task<Result<int>> Handle(CreateToDoItemCommand request, CancellationToken cancellationToken)
     {
-        var toDoItem = ToDoItem.Create(request.Title);
+        try
+        {
+            var toDoItem = ToDoItem.Create(request.Title);
+            _ToDoItemRepository.Add(toDoItem);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        _ToDoItemRepository.Add(toDoItem);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return toDoItem.Id;
+            return toDoItem.Id;
+        }
+        catch (Exception ex)
+        {
+            return new Result<int>(ex);
+        }
     }
 }
 
