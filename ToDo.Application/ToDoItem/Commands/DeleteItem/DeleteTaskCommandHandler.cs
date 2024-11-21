@@ -1,4 +1,5 @@
 ﻿using DotNext;
+using Microsoft.Extensions.Logging;
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
@@ -10,11 +11,15 @@ public sealed class DeleteTaskCommandHandler
 {
     private readonly IToDoItemRepository _ToDoItemRepository;
     private readonly IUnitOfWork _unitOfWork;
-
-    public DeleteTaskCommandHandler(IUnitOfWork unitOfWork, IToDoItemRepository ToDoItemRepository)
+    private readonly ILogger<DeleteTaskCommandHandler> _logger;
+    public DeleteTaskCommandHandler(
+        IUnitOfWork unitOfWork,
+        IToDoItemRepository ToDoItemRepository,
+        ILogger<DeleteTaskCommandHandler> logger)
     {
         _unitOfWork = unitOfWork;
         _ToDoItemRepository = ToDoItemRepository;
+        _logger = logger;
     }
 
     public async Task<Result<Unit>> Handle(DeleteTaskCommand request, CancellationToken cancellationToken)
@@ -34,6 +39,7 @@ public sealed class DeleteTaskCommandHandler
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "DeleteTaskCommandHandler.Handle Exception.");
             return new Result<Unit>(ex);
         }
     }

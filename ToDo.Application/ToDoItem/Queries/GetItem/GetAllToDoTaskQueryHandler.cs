@@ -1,6 +1,6 @@
 ﻿using DotNext;
+using Microsoft.Extensions.Logging;
 using ToDo.Application.Abstractions.Messaging;
-using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
 
 namespace ToDo.Application.ToDoItems.Queries.GetToDoItem;
@@ -9,13 +9,18 @@ internal sealed class GetAllToDoItemQueryHandler
     : IQueryHandler<GetAllToDoItemQuery, ToDoItemAllResponse>
 {
     private readonly IToDoItemRepository _ToDoItemRepository;
+    private readonly ILogger<GetAllToDoItemQueryHandler> _logger;
 
-    public GetAllToDoItemQueryHandler(IToDoItemRepository ToDoItemRepository) => _ToDoItemRepository = ToDoItemRepository;
+    public GetAllToDoItemQueryHandler(IToDoItemRepository ToDoItemRepository, ILogger<GetAllToDoItemQueryHandler> logger)
+    {
+        _ToDoItemRepository = ToDoItemRepository;
+        _logger = logger;
+    }
 
     public async Task<Result<ToDoItemAllResponse>> Handle(GetAllToDoItemQuery request, CancellationToken cancellationToken)
     {
         try
-        {
+        {            
             var ToDoItems = await _ToDoItemRepository.GetAllAsync(cancellationToken);
 
             var taskResponse = ToDoItems
@@ -26,8 +31,9 @@ internal sealed class GetAllToDoItemQueryHandler
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "GetAllToDoItemQueryHandler.Handle Exception.");
             return new Result<ToDoItemAllResponse>(ex);
-        }        
+        }
     }
 }
 

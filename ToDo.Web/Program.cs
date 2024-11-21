@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Scrutor;
+using Serilog;
 using ToDo.Data;
 using ToDo.Web.Components;
 
@@ -10,6 +11,8 @@ builder.Services
     .AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
 
 builder
     .Services

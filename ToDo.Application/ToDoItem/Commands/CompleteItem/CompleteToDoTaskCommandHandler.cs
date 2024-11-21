@@ -1,4 +1,5 @@
 ﻿using DotNext;
+using Microsoft.Extensions.Logging;
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
@@ -9,14 +10,18 @@ namespace ToDo.Application.ToDoItems.Commands.CompleteTask;
 internal sealed class CompleteToDoItemCommandHandler :
         ICommandHandler<CompleteToDoItemCommand, Unit>
 {
-
     private readonly IToDoItemRepository _toDoItemRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<CompleteToDoItemCommandHandler> _logger;
 
-    public CompleteToDoItemCommandHandler(IUnitOfWork unitOfWork, IToDoItemRepository ToDoItemRepository)
+    public CompleteToDoItemCommandHandler(
+        IUnitOfWork unitOfWork,
+        IToDoItemRepository ToDoItemRepository,
+        ILogger<CompleteToDoItemCommandHandler> logger)
     {
         _unitOfWork = unitOfWork;
         _toDoItemRepository = ToDoItemRepository;
+        _logger = logger;
     }
 
     public async Task<Result<Unit>> Handle(CompleteToDoItemCommand request, CancellationToken cancellationToken)
@@ -38,6 +43,7 @@ internal sealed class CompleteToDoItemCommandHandler :
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "CompleteToDoItemCommandHandler.Handle Exception.");
             return new Result<Unit>(ex);
         }
     }

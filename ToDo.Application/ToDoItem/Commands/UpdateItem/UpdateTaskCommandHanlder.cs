@@ -1,4 +1,5 @@
 ﻿using DotNext;
+using Microsoft.Extensions.Logging;
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
@@ -11,11 +12,15 @@ namespace ToDo.Application.ToDoItems.Commands.UpdateTask
     {
         private readonly IToDoItemRepository _toDoItemRepository;
         private readonly IUnitOfWork _unitOfWork;
-
-        public UpdateTaskCommandHanlder(IToDoItemRepository ToDoItemRepository, IUnitOfWork unitOfWork)
+        private readonly ILogger<UpdateTaskCommandHanlder> _logger;
+        public UpdateTaskCommandHanlder(
+            IToDoItemRepository ToDoItemRepository, 
+            IUnitOfWork unitOfWork, 
+            ILogger<UpdateTaskCommandHanlder> logger)
         {
             _toDoItemRepository = ToDoItemRepository;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<Result<Unit>> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
@@ -37,6 +42,7 @@ namespace ToDo.Application.ToDoItems.Commands.UpdateTask
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "UpdateTaskCommandHanlder.Handle Exception.");
                 return new Result<Unit>(ex);
             }
         }
