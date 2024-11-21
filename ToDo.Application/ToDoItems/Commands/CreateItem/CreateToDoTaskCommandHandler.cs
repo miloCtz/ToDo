@@ -1,10 +1,10 @@
-﻿using DotNext;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Entities;
 using ToDo.Domain.Repositories;
+using ToDo.Domain.Shared;
 
-namespace ToDo.Application.ToDoItems.Commands.CreateTask;
+namespace ToDo.Application.ToDoItems.Commands.CreateItem;
 public sealed class CreateToDoItemCommandHandler
     : ICommandHandler<CreateToDoItemCommand, int>
 {
@@ -35,7 +35,7 @@ public sealed class CreateToDoItemCommandHandler
         catch (Exception ex)
         {
             _logger.LogError(ex, "CreateToDoItemCommandHandler.Handle Exception.");
-            return new Result<int>(ex);
+            return Result.Failure<int>(ex);
         }
     }
 }

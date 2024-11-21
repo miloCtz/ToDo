@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using ToDo.Domain.Entities;
 
-namespace ToDo.Application.ToDoItems.Commands.CreateTask;
+namespace ToDo.Application.ToDoItems.Commands.CreateItem;
 
 internal class CreateToDoTaskCommandValidator : AbstractValidator<CreateToDoItemCommand>
 {

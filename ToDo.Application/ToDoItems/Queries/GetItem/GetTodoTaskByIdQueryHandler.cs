@@ -1,10 +1,10 @@
-﻿using DotNext;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
+using ToDo.Domain.Shared;
 
-namespace ToDo.Application.ToDoItems.Queries.GetToDoItem;
+namespace ToDo.Application.ToDoItems.Queries.GetItem;
 public sealed class GetToDoItemByIdQueryHandler
     : IQueryHandler<GetToDoItemByIdQuery, ToDoItemResponse>
 {
@@ -25,7 +25,7 @@ public sealed class GetToDoItemByIdQueryHandler
 
             if (ToDoItem is null)
             {
-                return new Result<ToDoItemResponse>(DomainErrors.ToDoList.NotFound(request.Id));
+                return Result.Failure<ToDoItemResponse>(DomainErrors.ToDoList.NotFound(request.Id));
             }
 
             return new ToDoItemResponse(ToDoItem.Id, ToDoItem.Title, ToDoItem.IsDone);
@@ -33,7 +33,7 @@ public sealed class GetToDoItemByIdQueryHandler
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetToDoItemByIdQueryHandler.Handle Exception.");
-            return new Result<ToDoItemResponse>(ex);
+            return Result.Failure<ToDoItemResponse>(ex);
         }
     }
 }

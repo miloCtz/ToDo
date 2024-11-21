@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ToDo.Application.ToDoItems.Queries.GetToDoItem;
+using ToDo.Application.ToDoItems.Queries.GetItem;
 using ToDo.Domain.Entities;
 using ToDo.Domain.Errors;
 
@@ -35,7 +35,7 @@ namespace ToDo.Application.Tests
             var result = await _handler.Handle(command, default);
 
             //Assert
-            result.IsSuccessful.Should().BeTrue();
+            result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();
             result.Value.ToDoItems.Should().HaveCount(toDoItems.Count);
             _repositoryMock.Verify(x => x.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -49,16 +49,16 @@ namespace ToDo.Application.Tests
                 x => x.GetAllAsync(It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
 
-            var command = new GetAllToDoItemQuery();            
+            var command = new GetAllToDoItemQuery();
             var error = DomainErrors.ToDoList.NotFound(1);
 
             //Act
             var result = await _handler.Handle(command, default);
 
             //Assert
-            result.IsSuccessful.Should().BeFalse();
+            result.IsSuccess.Should().BeFalse();
             result.Error.Should().NotBeNull();
-            result.Error.GetType().Should().Be(typeof(Exception));
+            result.Error.Code.Should().Be(typeof(Exception).Name);
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using DotNext;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Repositories;
+using ToDo.Domain.Shared;
 
-namespace ToDo.Application.ToDoItems.Queries.GetToDoItem;
+namespace ToDo.Application.ToDoItems.Queries.GetItem;
 
 public sealed class GetAllToDoItemQueryHandler
     : IQueryHandler<GetAllToDoItemQuery, ToDoItemAllResponse>
@@ -20,7 +20,7 @@ public sealed class GetAllToDoItemQueryHandler
     public async Task<Result<ToDoItemAllResponse>> Handle(GetAllToDoItemQuery request, CancellationToken cancellationToken)
     {
         try
-        {            
+        {
             var ToDoItems = await _ToDoItemRepository.GetAllAsync(cancellationToken);
 
             var taskResponse = ToDoItems
@@ -32,7 +32,7 @@ public sealed class GetAllToDoItemQueryHandler
         catch (Exception ex)
         {
             _logger.LogError(ex, "GetAllToDoItemQueryHandler.Handle Exception.");
-            return new Result<ToDoItemAllResponse>(ex);
+            return Result.Failure<ToDoItemAllResponse>(ex);
         }
     }
 }

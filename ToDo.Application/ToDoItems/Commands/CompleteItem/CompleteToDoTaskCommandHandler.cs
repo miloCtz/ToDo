@@ -1,11 +1,10 @@
-﻿using DotNext;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
 using ToDo.Domain.Shared;
 
-namespace ToDo.Application.ToDoItems.Commands.CompleteTask;
+namespace ToDo.Application.ToDoItems.Commands.CompleteItem;
 
 public sealed class CompleteToDoItemCommandHandler :
         ICommandHandler<CompleteToDoItemCommand, Unit>
@@ -32,7 +31,7 @@ public sealed class CompleteToDoItemCommandHandler :
 
             if (toDoItem is null)
             {
-                return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
+                return Result.Failure<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));                
             }
 
             toDoItem.Toggle();
@@ -44,7 +43,7 @@ public sealed class CompleteToDoItemCommandHandler :
         catch (Exception ex)
         {
             _logger.LogError(ex, "CompleteToDoItemCommandHandler.Handle Exception.");
-            return new Result<Unit>(ex);
+            return Result.Failure<Unit>(ex);
         }
     }
 }

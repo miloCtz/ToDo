@@ -6,7 +6,7 @@ namespace ToDo.Domain.Errors
     {
         public static class ToDoList
         {
-            public static readonly Func<int, DomainException> NotFound = id => new(
+            public static readonly Func<int, Error> NotFound = id => new(
                 "ToDoItem.NotFound",
                 $"The To-Do item with id {id} was not found.");          
         }

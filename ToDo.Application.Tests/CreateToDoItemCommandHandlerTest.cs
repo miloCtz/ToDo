@@ -1,8 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ToDo.Application.ToDoItems.Commands.CompleteTask;
-using ToDo.Application.ToDoItems.Commands.CreateTask;
+using ToDo.Application.ToDoItems.Commands.CreateItem;
 using ToDo.Domain.Entities;
 
 namespace ToDo.Application.Tests
@@ -30,7 +29,7 @@ namespace ToDo.Application.Tests
             var result = await _handler.Handle(command, default);
 
             //Assert
-            result.IsSuccessful.Should().BeTrue();
+            result.IsSuccess.Should().BeTrue();
             _repositoryMock.Verify(x => x.Add(It.IsAny<ToDoItem>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -45,15 +44,15 @@ namespace ToDo.Application.Tests
                 .Throws(exception);
 
 
-            var command = new CreateToDoItemCommand("Title");            
+            var command = new CreateToDoItemCommand("Title");
 
             //Act
             var result = await _handler.Handle(command, default);
 
             //Assert
-            result.IsSuccessful.Should().BeFalse();
+            result.IsSuccess.Should().BeFalse();
             result.Error.Should().NotBeNull();
-            result.Error.Should().Be(exception);
+            result.Error.Code.Should().Be(typeof(Exception).Name);
         }
     }
 }

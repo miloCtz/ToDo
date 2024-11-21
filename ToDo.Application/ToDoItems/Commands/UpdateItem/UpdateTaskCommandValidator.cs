@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using ToDo.Domain.Entities;
 
-namespace ToDo.Application.ToDoItems.Commands.UpdateTask;
+namespace ToDo.Application.ToDoItems.Commands.UpdateItem;
 
 internal class UpdateTaskCommandValidator : AbstractValidator<UpdateTaskCommand>
 {

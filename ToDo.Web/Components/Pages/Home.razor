@@ -1,9 +1,9 @@
 ﻿@page "/"
 @using MediatR
-@using ToDo.Application.ToDoItems.Commands.CompleteTask
-@using ToDo.Application.ToDoItems.Commands.CreateTask
-@using ToDo.Application.ToDoItems.Commands.DeleteTask
-@using ToDo.Application.ToDoItems.Queries.GetToDoItem
+@using ToDo.Application.ToDoItems.Commands.CompleteItem
+@using ToDo.Application.ToDoItems.Commands.CreateItem
+@using ToDo.Application.ToDoItems.Commands.DeleteItem
+@using ToDo.Application.ToDoItems.Queries.GetItem
 @inject ISender _sender
 @rendermode InteractiveServer
 
@@ -46,7 +46,7 @@
         var queryRequest = new GetAllToDoItemQuery();
         var result = await _sender.Send(queryRequest);
 
-        if (result.IsSuccessful)
+        if (result.IsSuccess)
         {
             _toDoItems = result.Value.ToDoItems;
         }
@@ -57,7 +57,7 @@
         var commandRequest = new CreateToDoItemCommand(_newToDo);
         var result = await _sender.Send(commandRequest);
 
-        if (result.IsSuccessful)
+        if (result.IsSuccess)
         {
             _newToDo = null;
             await GetAllItemsAsync();
@@ -69,7 +69,7 @@
         var commandRequest = new DeleteTaskCommand(id);
         var result = await _sender.Send(commandRequest);
 
-        if (result.IsSuccessful)
+        if (result.IsSuccess)
         {
             await GetAllItemsAsync();
         }

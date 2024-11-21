@@ -1,11 +1,10 @@
-﻿using DotNext;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
 using ToDo.Domain.Shared;
 
-namespace ToDo.Application.ToDoItems.Commands.DeleteTask;
+namespace ToDo.Application.ToDoItems.Commands.DeleteItem;
 public sealed class DeleteTaskCommandHandler
     : ICommandHandler<DeleteTaskCommand, Unit>
 {
@@ -30,7 +29,7 @@ public sealed class DeleteTaskCommandHandler
 
             if (ToDoItem is null)
             {
-                return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
+                return Result.Failure<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
             }
 
             _ToDoItemRepository.Delete(ToDoItem);
@@ -40,7 +39,7 @@ public sealed class DeleteTaskCommandHandler
         catch (Exception ex)
         {
             _logger.LogError(ex, "DeleteTaskCommandHandler.Handle Exception.");
-            return new Result<Unit>(ex);
+            return Result.Failure<Unit>(ex);
         }
     }
 }

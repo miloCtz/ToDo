@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ToDo.Application.ToDoItems.Queries.GetToDoItem;
+using ToDo.Application.ToDoItems.Queries.GetItem;
 using ToDo.Domain.Entities;
 using ToDo.Domain.Errors;
 
@@ -30,13 +30,13 @@ namespace ToDo.Application.Tests
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(toDoItem));
 
-            var command = new GetToDoItemByIdQuery(1);            
+            var command = new GetToDoItemByIdQuery(1);
 
             //Act
             var result = await _handler.Handle(command, default);
 
             //Assert
-            result.IsSuccessful.Should().BeTrue();
+            result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();
             result.Value.Title.Should().Be(toDoItem.Title);
             _repositoryMock.Verify(x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -59,7 +59,7 @@ namespace ToDo.Application.Tests
             var result = await _handler.Handle(command, default);
 
             //Assert
-            result.IsSuccessful.Should().BeFalse();
+            result.IsSuccess.Should().BeFalse();
             result.Error.Should().NotBeNull();
             result.Error.Message.Should().Be(error.Message);
             _repositoryMock.Verify(x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -73,16 +73,16 @@ namespace ToDo.Application.Tests
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
 
-            var command = new GetToDoItemByIdQuery(1);            
+            var command = new GetToDoItemByIdQuery(1);
             var error = DomainErrors.ToDoList.NotFound(1);
 
             //Act
             var result = await _handler.Handle(command, default);
 
             //Assert
-            result.IsSuccessful.Should().BeFalse();
+            result.IsSuccess.Should().BeFalse();
             result.Error.Should().NotBeNull();
-            result.Error.GetType().Should().Be(typeof(Exception));
+            result.Error.Code.Should().Be(typeof(Exception).Name);
             _repositoryMock.Verify(x => x.Add(It.IsAny<ToDoItem>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }

@@ -1,11 +1,10 @@
-﻿using DotNext;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
 using ToDo.Domain.Shared;
 
-namespace ToDo.Application.ToDoItems.Commands.UpdateTask
+namespace ToDo.Application.ToDoItems.Commands.UpdateItem
 {
     public sealed class UpdateTaskCommandHanlder
         : ICommandHandler<UpdateTaskCommand, Unit>
@@ -14,8 +13,8 @@ namespace ToDo.Application.ToDoItems.Commands.UpdateTask
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<UpdateTaskCommandHanlder> _logger;
         public UpdateTaskCommandHanlder(
-            IToDoItemRepository ToDoItemRepository, 
-            IUnitOfWork unitOfWork, 
+            IToDoItemRepository ToDoItemRepository,
+            IUnitOfWork unitOfWork,
             ILogger<UpdateTaskCommandHanlder> logger)
         {
             _toDoItemRepository = ToDoItemRepository;
@@ -31,7 +30,7 @@ namespace ToDo.Application.ToDoItems.Commands.UpdateTask
 
                 if (ToDoItem is null)
                 {
-                    return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
+                    return Result.Failure<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
                 }
 
                 ToDoItem.UpdateTitle(request.Title);
@@ -43,7 +42,7 @@ namespace ToDo.Application.ToDoItems.Commands.UpdateTask
             catch (Exception ex)
             {
                 _logger.LogError(ex, "UpdateTaskCommandHanlder.Handle Exception.");
-                return new Result<Unit>(ex);
+                return Result.Failure<Unit>(ex);
             }
         }
     }
