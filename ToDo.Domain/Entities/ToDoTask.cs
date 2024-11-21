@@ -4,6 +4,9 @@ namespace ToDo.Domain.Entities
 {
     public sealed class ToDoItem : Entity
     {
+        public const int MaxLength = 50;
+        public const int MinLength = 1;
+
         private ToDoItem(string title)
         {
             Title = title;
