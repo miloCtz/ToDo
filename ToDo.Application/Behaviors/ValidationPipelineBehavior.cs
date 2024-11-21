@@ -7,6 +7,7 @@ namespace ToDo.Application.Behaviors;
 public class ValidationPipelineBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
+    where TResponse : Result
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -35,20 +36,22 @@ public class ValidationPipelineBehavior<TRequest, TResponse>
 
         if (errors.Any())
         {
-            // return CreateValidationResult<TResponse>(errors);
+            return CreateValidationResult<TResponse>(errors);
         }
 
         return await next();
     }
 
-    //private static T CreateValidationResult<T>(DomainException[] errors)
-    //{
-    //    if(typeof(T) == typeof(Result<>))
-    //    {
-    //        return (ValidationResult.wi)
-    //    }
+    private static T CreateValidationResult<T>(Error[] errors)
+        where T : Result
+    {
+        object validationResult = typeof(ValidationResult<>)
+            .GetGenericTypeDefinition()
+            .MakeGenericType(typeof(T).GenericTypeArguments[0])
+            .GetMethod("WithErrors")!
+            .Invoke(null, new object?[] { errors })!;
 
-    //    throw new NotImplementedException();
-    //}
+        return (T)validationResult;
+    }
 }
 

@@ -1,6 +1,9 @@
+using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scrutor;
 using Serilog;
+using ToDo.Application.Behaviors;
 using ToDo.Data;
 using ToDo.Web.Components;
 
@@ -27,10 +30,16 @@ builder
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(ToDo.Application.AssemblyReference.Assembly));
 
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
+
+builder.Services.AddValidatorsFromAssembly(
+    ToDo.Application.AssemblyReference.Assembly,
+    includeInternalTypes: true);
+
 builder.Services.AddDbContext<DatabaseContext>(
     (sp, optionsBuilder) =>
     {
-        optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("ConnetionString"));        
+        optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("ConnetionString"));
     });
 
 var app = builder.Build();
