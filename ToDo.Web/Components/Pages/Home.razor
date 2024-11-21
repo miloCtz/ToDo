@@ -1,7 +1,83 @@
 ﻿@page "/"
+@using MediatR
+@using ToDo.Application.ToDoItems.Commands.CompleteTask
+@using ToDo.Application.ToDoItems.Commands.CreateTask
+@using ToDo.Application.ToDoItems.Commands.DeleteTask
+@using ToDo.Application.ToDoItems.Queries.GetToDoItem
+@inject ISender _sender
+@rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+<PageTitle>To Do</PageTitle>
 
-<h1>Hello, world!</h1>
+<article>
 
-Welcome to your new app.
+<h1>To Do</h1>
+<section class="new-task">
+    <span @onclick="SaveItemAsync" class="material-icons">add</span>
+    <input type="text" @bind="_newToDo" placeholder="">
+</section>
+
+<section class="task-list">
+    <ul>
+    @foreach(var item in _toDoItems)
+    {        
+        <li class="task"> 
+            <input type="checkbox" checked="@item.IsDone"  @onchange="@(()=>CompleteItemAsync(item.Id))">
+            <label>@item.Title</label>
+                <span @onclick="@(()=>DeleteItemAsycn(item.Id))" class="material-icons">delete</span>
+        </li>  
+    }  
+    </ul>
+</section>
+
+</article>
+
+@code {
+    protected string? _newToDo;
+    protected List<ToDoItemResponse> _toDoItems = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAllItemsAsync();
+    }
+
+    protected async Task GetAllItemsAsync()
+    {
+        var queryRequest = new GetAllToDoItemQuery();
+        var result = await _sender.Send(queryRequest);
+
+        if (result.IsSuccessful)
+        {
+            _toDoItems = result.Value.ToDoItems;
+        }
+    }
+
+    protected async Task SaveItemAsync()
+    {
+        var commandRequest = new CreateToDoItemCommand(_newToDo);
+        var result = await _sender.Send(commandRequest);
+
+        if (result.IsSuccessful)
+        {
+            _newToDo = null;
+            await GetAllItemsAsync();
+        }
+    }
+
+    protected async Task DeleteItemAsycn(int id)
+    {
+        var commandRequest = new DeleteTaskCommand(id);
+        var result = await _sender.Send(commandRequest);
+
+        if (result.IsSuccessful)
+        {
+            await GetAllItemsAsync();
+        }
+    }
+
+    protected async Task CompleteItemAsync(int id)
+    {
+        var commandRequest = new CompleteToDoItemCommand(id);
+        var result = await _sender.Send(commandRequest);       
+    }
+}

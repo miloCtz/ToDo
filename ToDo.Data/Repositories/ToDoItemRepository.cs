@@ -17,9 +17,9 @@ internal sealed class ToDoItemRepository : IToDoItemRepository
         _dbContext.Set<ToDoItem>().Remove(entity);
 
     public async Task<List<ToDoItem>> GetAllAsync(CancellationToken cancellationToken = default) =>
-        await _dbContext.Set<ToDoItem>().ToListAsync(cancellationToken);
+        await _dbContext.Set<ToDoItem>().AsNoTracking().ToListAsync(cancellationToken);
 
     public async Task<ToDoItem?> GetAsync(int id, CancellationToken cancellationToken = default) =>
-        await _dbContext.Set<ToDoItem>().FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+        await _dbContext.Set<ToDoItem>().FindAsync(id);
 }
 

@@ -1,5 +1,4 @@
 ﻿using DotNext;
-
 using ToDo.Application.Abstractions.Messaging;
 using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
@@ -31,13 +30,7 @@ internal sealed class CompleteToDoItemCommandHandler :
                 return new Result<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
             }
 
-            if (toDoItem.IsDone)
-            {
-                return new Result<Unit>(DomainErrors.ToDoList.IsAlreadyDone);
-            }
-
-            toDoItem.Complete();
-            _toDoItemRepository.Add(toDoItem);
+            toDoItem.Toggle();
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

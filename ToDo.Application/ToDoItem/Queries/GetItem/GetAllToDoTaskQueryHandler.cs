@@ -27,9 +27,7 @@ internal sealed class GetAllToDoItemQueryHandler
         catch (Exception ex)
         {
             return new Result<ToDoItemAllResponse>(ex);
-        }
-
-        
+        }        
     }
 }
 

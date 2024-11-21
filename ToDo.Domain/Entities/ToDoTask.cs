@@ -16,9 +16,9 @@ namespace ToDo.Domain.Entities
         public string Title { get; private set; }
         public bool IsDone { get; private set; }
 
-        public void Complete()
+        public void Toggle()
         {
-            IsDone = true;
+            IsDone = !IsDone;
         }
 
         public void UpdateTitle(string title)

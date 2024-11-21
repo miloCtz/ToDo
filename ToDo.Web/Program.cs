@@ -1,17 +1,33 @@
 using Microsoft.EntityFrameworkCore;
+using Scrutor;
 using ToDo.Data;
 using ToDo.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
+builder.Services
+    .AddRazorComponents()
     .AddInteractiveServerComponents();
+
+
+builder
+    .Services
+    .Scan(
+        selector => selector
+            .FromAssemblies(
+                ToDo.Data.AssemblyReference.Assembly)
+            .AddClasses(false)
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(ToDo.Application.AssemblyReference.Assembly));
 
 builder.Services.AddDbContext<DatabaseContext>(
     (sp, optionsBuilder) =>
     {
-        optionsBuilder.UseSqlServer("Data Source=(localdb)\\Test;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+        optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("ConnetionString"));
     });
 
 var app = builder.Build();

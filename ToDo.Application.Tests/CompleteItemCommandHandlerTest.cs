@@ -26,17 +26,16 @@ namespace ToDo.Application.Tests
 
             //Assert
             result.IsSuccessful.Should().BeTrue();
-            toDoItem.IsDone.Should().BeTrue();
-            _repositoryMock.Verify(x => x.Add(It.IsAny<ToDoItem>()), Times.Once);
+            toDoItem.IsDone.Should().BeTrue();            
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
-        public async Task Handle_Should_Fail_ReturnAlredyDone()
+        public async Task Handle_Should_Success_IsNotDone()
         {
             //Arrange
             var toDoItem = ToDoItem.Create("Test");
-            toDoItem.Complete();
+            toDoItem.Toggle();
 
             _repositoryMock.Setup(
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
@@ -44,17 +43,14 @@ namespace ToDo.Application.Tests
 
             var command = new CompleteToDoItemCommand(1);
             var handler = new CompleteToDoItemCommandHandler(_unitOfWorkMock.Object, _repositoryMock.Object);
-            var error = DomainErrors.ToDoList.IsAlreadyDone;
 
             //Act
             var result = await handler.Handle(command, default);
 
             //Assert
-            result.IsSuccessful.Should().BeFalse();
-            result.Error.Should().NotBeNull();
-            result.Error.Message.Should().Be(error.Message);
-            _repositoryMock.Verify(x => x.Add(It.IsAny<ToDoItem>()), Times.Never);
-            _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+            result.IsSuccessful.Should().BeTrue();
+            toDoItem.IsDone.Should().BeFalse();            
+            _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
