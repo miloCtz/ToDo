@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ToDo.Application.ToDoItems.Commands.DeleteTask;
 using ToDo.Domain.Entities;
@@ -8,6 +9,16 @@ namespace ToDo.Application.Tests
 {
     public class DeleteTaskCommandHandlerTest : TestHandlerBase
     {
+        readonly Mock<ILogger<DeleteTaskCommandHandler>> _loggerMock;
+        readonly DeleteTaskCommandHandler _handler;
+
+        public DeleteTaskCommandHandlerTest()
+           : base()
+        {
+            _loggerMock = new Mock<ILogger<DeleteTaskCommandHandler>>();
+            _handler = new DeleteTaskCommandHandler(_unitOfWorkMock.Object, _repositoryMock.Object, _loggerMock.Object);
+        }
+
         [Fact]
         public async Task Handle_Should_Success()
         {
@@ -18,11 +29,10 @@ namespace ToDo.Application.Tests
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(toDoItem));
 
-            var command = new DeleteTaskCommand(1);
-            var handler = new DeleteTaskCommandHandler(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var command = new DeleteTaskCommand(1);            
 
             //Act
-            var result = await handler.Handle(command, default);
+            var result = await _handler.Handle(command, default);
 
             //Assert
             result.IsSuccessful.Should().BeTrue();
@@ -38,12 +48,11 @@ namespace ToDo.Application.Tests
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(default(ToDoItem)));
 
-            var command = new DeleteTaskCommand(1);
-            var handler = new DeleteTaskCommandHandler(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var command = new DeleteTaskCommand(1);            
             var error = DomainErrors.ToDoList.NotFound(1);
 
             //Act
-            var result = await handler.Handle(command, default);
+            var result = await _handler.Handle(command, default);
 
             //Assert
             result.IsSuccessful.Should().BeFalse();
@@ -61,11 +70,10 @@ namespace ToDo.Application.Tests
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
 
-            var command = new DeleteTaskCommand(1);
-            var handler = new DeleteTaskCommandHandler(_unitOfWorkMock.Object, _repositoryMock.Object);
+            var command = new DeleteTaskCommand(1);            
 
             //Act
-            var result = await handler.Handle(command, default);
+            var result = await _handler.Handle(command, default);
 
             //Assert
             result.IsSuccessful.Should().BeFalse();

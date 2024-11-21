@@ -5,7 +5,7 @@ using ToDo.Domain.Entities;
 using ToDo.Domain.Repositories;
 
 namespace ToDo.Application.ToDoItems.Commands.CreateTask;
-internal sealed class CreateToDoItemCommandHandler
+public sealed class CreateToDoItemCommandHandler
     : ICommandHandler<CreateToDoItemCommand, int>
 {
     private readonly IToDoItemRepository _ToDoItemRepository;

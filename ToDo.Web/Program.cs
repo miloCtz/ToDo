@@ -30,7 +30,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(ToDo.Applica
 builder.Services.AddDbContext<DatabaseContext>(
     (sp, optionsBuilder) =>
     {
-        optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("ConnetionString"));
+        optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("ConnetionString"));        
     });
 
 var app = builder.Build();

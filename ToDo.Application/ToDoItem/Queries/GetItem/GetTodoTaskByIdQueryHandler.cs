@@ -5,7 +5,7 @@ using ToDo.Domain.Errors;
 using ToDo.Domain.Repositories;
 
 namespace ToDo.Application.ToDoItems.Queries.GetToDoItem;
-internal sealed class GetToDoItemByIdQueryHandler
+public sealed class GetToDoItemByIdQueryHandler
     : IQueryHandler<GetToDoItemByIdQuery, ToDoItemResponse>
 {
     private readonly IToDoItemRepository _ToDoItemRepository;

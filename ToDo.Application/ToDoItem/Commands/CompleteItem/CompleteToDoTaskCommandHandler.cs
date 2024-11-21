@@ -7,7 +7,7 @@ using ToDo.Domain.Shared;
 
 namespace ToDo.Application.ToDoItems.Commands.CompleteTask;
 
-internal sealed class CompleteToDoItemCommandHandler :
+public sealed class CompleteToDoItemCommandHandler :
         ICommandHandler<CompleteToDoItemCommand, Unit>
 {
     private readonly IToDoItemRepository _toDoItemRepository;

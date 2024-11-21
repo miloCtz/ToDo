@@ -5,7 +5,7 @@ using ToDo.Domain.Repositories;
 
 namespace ToDo.Application.ToDoItems.Queries.GetToDoItem;
 
-internal sealed class GetAllToDoItemQueryHandler
+public sealed class GetAllToDoItemQueryHandler
     : IQueryHandler<GetAllToDoItemQuery, ToDoItemAllResponse>
 {
     private readonly IToDoItemRepository _ToDoItemRepository;

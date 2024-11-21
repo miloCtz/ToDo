@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ToDo.Application.ToDoItems.Commands.UpdateTask;
 using ToDo.Domain.Entities;
@@ -8,6 +9,16 @@ namespace ToDo.Application.Tests
 {
     public class UpdateTaskCommandHanlderTest : TestHandlerBase
     {
+        readonly Mock<ILogger<UpdateTaskCommandHanlder>> _loggerMock;
+        readonly UpdateTaskCommandHanlder _handler; 
+
+        public UpdateTaskCommandHanlderTest()
+            : base()
+        {
+            _loggerMock = new Mock<ILogger<UpdateTaskCommandHanlder>>();
+            _handler = new UpdateTaskCommandHanlder(_repositoryMock.Object, _unitOfWorkMock.Object, _loggerMock.Object);
+        }
+
         [Fact]
         public async Task Handle_Should_Success()
         {
@@ -18,11 +29,10 @@ namespace ToDo.Application.Tests
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(toDoItem));
 
-            var command = new UpdateTaskCommand(1, "New Title");
-            var handler = new UpdateTaskCommandHanlder(_repositoryMock.Object, _unitOfWorkMock.Object);
+            var command = new UpdateTaskCommand(1, "New Title");           
 
             //Act
-            var result = await handler.Handle(command, default);
+            var result = await _handler.Handle(command, default);
 
             //Assert
             result.IsSuccessful.Should().BeTrue();
@@ -39,12 +49,11 @@ namespace ToDo.Application.Tests
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(default(ToDoItem)));
 
-            var command = new UpdateTaskCommand(1, "New Title");
-            var handler = new UpdateTaskCommandHanlder(_repositoryMock.Object, _unitOfWorkMock.Object);
+            var command = new UpdateTaskCommand(1, "New Title");            
             var error = DomainErrors.ToDoList.NotFound(1);
 
             //Act
-            var result = await handler.Handle(command, default);
+            var result = await _handler.Handle(command, default);
 
             //Assert
             result.IsSuccessful.Should().BeFalse();
@@ -62,12 +71,11 @@ namespace ToDo.Application.Tests
                 x => x.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
 
-            var command = new UpdateTaskCommand(1, "New Title");
-            var handler = new UpdateTaskCommandHanlder(_repositoryMock.Object, _unitOfWorkMock.Object);
+            var command = new UpdateTaskCommand(1, "New Title");            
             var error = DomainErrors.ToDoList.NotFound(1);
 
             //Act
-            var result = await handler.Handle(command, default);
+            var result = await _handler.Handle(command, default);
 
             //Assert
             result.IsSuccessful.Should().BeFalse();

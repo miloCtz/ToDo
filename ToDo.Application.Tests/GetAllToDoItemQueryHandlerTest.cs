@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ToDo.Application.ToDoItems.Queries.GetToDoItem;
 using ToDo.Domain.Entities;
@@ -8,6 +9,16 @@ namespace ToDo.Application.Tests
 {
     public class GetAllToDoItemQueryHandlerTest : TestHandlerBase
     {
+        readonly Mock<ILogger<GetAllToDoItemQueryHandler>> _loggerMock;
+        readonly GetAllToDoItemQueryHandler _handler;
+
+        public GetAllToDoItemQueryHandlerTest()
+            : base()
+        {
+            _loggerMock = new Mock<ILogger<GetAllToDoItemQueryHandler>>();
+            _handler = new GetAllToDoItemQueryHandler(_repositoryMock.Object, _loggerMock.Object);
+        }
+
         [Fact]
         public async Task Handle_Should_Success()
         {
@@ -19,10 +30,9 @@ namespace ToDo.Application.Tests
                 .Returns(Task.FromResult(toDoItems));
 
             var command = new GetAllToDoItemQuery();
-            var handler = new GetAllToDoItemQueryHandler(_repositoryMock.Object);
 
             //Act
-            var result = await handler.Handle(command, default);
+            var result = await _handler.Handle(command, default);
 
             //Assert
             result.IsSuccessful.Should().BeTrue();
@@ -39,12 +49,11 @@ namespace ToDo.Application.Tests
                 x => x.GetAllAsync(It.IsAny<CancellationToken>()))
                 .Throws<Exception>();
 
-            var command = new GetAllToDoItemQuery();
-            var handler = new GetAllToDoItemQueryHandler(_repositoryMock.Object);
+            var command = new GetAllToDoItemQuery();            
             var error = DomainErrors.ToDoList.NotFound(1);
 
             //Act
-            var result = await handler.Handle(command, default);
+            var result = await _handler.Handle(command, default);
 
             //Assert
             result.IsSuccessful.Should().BeFalse();
