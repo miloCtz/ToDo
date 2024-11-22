@@ -62,6 +62,9 @@
 @code {
     protected string? _newToDo;
     protected string? _error;
+    protected string? _originalTitle;
+    protected ToDoItemModel? _editingItem;
+
     protected List<ToDoItemModel> _toDoItems = new();
 
     protected override async Task OnInitializedAsync()
@@ -133,7 +136,15 @@
 
     protected void UpdateItemAsycn(ToDoItemModel item)
     {
+        if(_editingItem is not null)
+        {
+            _editingItem.Title = _originalTitle;
+            _editingItem.CompleteEdit();
+        }
+
         item.Edit();
+        _originalTitle = item.Title;
+        _editingItem = item;
     }
 
     protected void OnInput(ChangeEventArgs e, ToDoItemModel item)

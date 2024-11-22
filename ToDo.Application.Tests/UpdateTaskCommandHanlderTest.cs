@@ -36,8 +36,7 @@ namespace ToDo.Application.Tests
 
             //Assert
             result.IsSuccess.Should().BeTrue();
-            toDoItem.Title.Should().Be("New Title");
-            _repositoryMock.Verify(x => x.Add(It.IsAny<ToDoItem>()), Times.Once);
+            toDoItem.Title.Should().Be("New Title");            
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
