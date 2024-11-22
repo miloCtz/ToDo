@@ -29,33 +29,58 @@ article {
     padding: 0 4rem;
 }
 
-    article h1 {
-        font-family: "Geist Mono", monospace;
-        font-weight: 400;
-        font-size: 4rem;
-        margin-top: 3rem;
-    }
+article h1 {
+    font-family: "Geist Mono", monospace;
+    font-weight: 400;
+    font-size: 4rem;
+    margin-top: 3rem;
+}
 
 .new-task {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 2rem 0 4rem;
+    margin: 2rem 0;
 }
 
-    .new-task span {
-        margin-right: 1rem;
-        color: gray;
-        cursor: pointer;
-    }
+.new-task span {
+    margin-right: 1rem;
+    color: gray;
+    cursor: pointer;
+}
 
-    .new-task input {
-        border-radius: 0.5rem;
-        border: 1px solid #49b0b8;
-        font-family: "Montserrat", sans-serif;
-        font-weight: 400;
-        height: 2.5rem;
-    }
+.new-task-input {
+    border-radius: 0.5rem;
+    border: 1px solid #49b0b8;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    height: 3rem;
+    padding: 1rem;
+    
+}
+
+.update-task-input[type="text"] {
+    background: none;
+    border-bottom: 2px solid;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    height: 3rem;
+    padding: 1rem;
+    margin-left: 3rem;
+}
+
+.error-msg {
+    word-wrap: break-word;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: white;
+    background-color: red;
+    padding: 1rem 2rem;
+    margin-bottom: 3rem;
+    border-radius: 1rem;
+    max-width: 90%;
+}
 
 .task-list {
     margin-bottom: 4rem;
@@ -63,9 +88,14 @@ article {
 
 .task {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 2rem;
+}
+
+.task div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 input[type="checkbox"] {
@@ -73,22 +103,27 @@ input[type="checkbox"] {
     height: 2rem;
     accent-color: #49b0b8;
     cursor: pointer;
-    margin: 1rem;
 }
 
-.task label {
+.task p {
     display: block;
     word-wrap: break-word;
+    word-break: break-word;
     font-family: "Montserrat", sans-serif;
     font-size: 1.5rem;
     padding: 0 2rem;
 }
 
-.task span {
+.task .material-icons {
     color: gray;
     cursor: pointer;
+    margin: 0.5rem;
 }
 
 li {
     list-style: none;
+}
+
+.complete {
+    text-decoration: line-through;
 }

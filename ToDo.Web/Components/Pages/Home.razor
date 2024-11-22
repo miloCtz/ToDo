@@ -3,7 +3,9 @@
 @using ToDo.Application.ToDoItems.Commands.CompleteItem
 @using ToDo.Application.ToDoItems.Commands.CreateItem
 @using ToDo.Application.ToDoItems.Commands.DeleteItem
+@using ToDo.Application.ToDoItems.Commands.UpdateItem
 @using ToDo.Application.ToDoItems.Queries.GetItem
+@using ToDo.Web.Models.ToDoItems
 @inject ISender _sender
 @rendermode InteractiveServer
 
@@ -14,17 +16,40 @@
 <h1>To Do</h1>
 <section class="new-task">
     <span @onclick="SaveItemAsync" class="material-icons">add</span>
-    <input type="text" @bind="_newToDo" placeholder="">
+    <input class="new-task-input" type="text" @bind="_newToDo" placeholder="New Task">
 </section>
+
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <section class="error-msg">
+          <span>Error: @_error</span>
+        </section>  
+    }
 
 <section class="task-list">
     <ul>
     @foreach(var item in _toDoItems)
-    {        
+    {
         <li class="task"> 
-            <input type="checkbox" checked="@item.IsDone"  @onchange="@(()=>CompleteItemAsync(item.Id))">
-            <label>@item.Title</label>
-                <span @onclick="@(()=>DeleteItemAsycn(item.Id))" class="material-icons">delete</span>
+
+            @if (item.IsEditing)
+            {
+                <div>
+                    <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
+                    <input class="update-task-input" type="text"  @oninput="(e) => OnInput(e, item)" @bind="item.Title" @onkeydown="(e) => UpdateAsync(e,item)">
+                </div>   
+            }
+            else
+            {
+                <div>
+                    <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
+                    <p class="@(item.IsDone ? "complete" : string.Empty)">@item.Title</p>
+                </div>        
+            }                   
+            <div>
+            <span @onclick="@(()=>UpdateItemAsycn(item))" class="material-icons">edit</span>
+            <span @onclick="@(()=>DeleteItemAsycn(item.Id))" class="material-icons">delete</span>
+            </div>
         </li>  
     }  
     </ul>
@@ -34,7 +59,8 @@
 
 @code {
     protected string? _newToDo;
-    protected List<ToDoItemResponse> _toDoItems = new();
+    protected string? _error;
+    protected List<ToDoItemModel> _toDoItems = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,7 +74,12 @@
 
         if (result.IsSuccess)
         {
-            _toDoItems = result.Value.ToDoItems;
+            _toDoItems = result.Value.ToDoItems.Select(item => new ToDoItemModel(item.Id,item.Title, item.IsDone)).ToList();
+        }
+
+        if (result.IsFailure)
+        {
+            _error = result.Error.Message;
         }
     }
 
@@ -62,6 +93,11 @@
             _newToDo = null;
             await GetAllItemsAsync();
         }
+
+        if (result.IsFailure)
+        {
+            _error = result.Error.Message;
+        }
     }
 
     protected async Task DeleteItemAsycn(int id)
@@ -73,11 +109,55 @@
         {
             await GetAllItemsAsync();
         }
+
+        if (result.IsFailure)
+        {
+            _error = result.Error.Message;
+        }
     }
 
     protected async Task CompleteItemAsync(int id)
     {
         var commandRequest = new CompleteToDoItemCommand(id);
-        var result = await _sender.Send(commandRequest);       
+        var result = await _sender.Send(commandRequest);
+
+        if (result.IsSuccess)
+        {
+            await GetAllItemsAsync();
+        }
+
+        if (result.IsFailure)
+        {
+            _error = result.Error.Message;
+        }
+    }
+
+    protected void UpdateItemAsycn(ToDoItemModel item)
+    {
+        item.Edit();
+    }
+
+    protected void OnInput(ChangeEventArgs e, ToDoItemModel item)
+    { 
+        item.Title = e.Value!.ToString()!;
+    }
+
+    protected async Task UpdateAsync(KeyboardEventArgs e, ToDoItemModel item)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            var command = new UpdateTaskCommand(item.Id, item.Title);
+            var result  = await _sender.Send(command);            
+
+            if (result.IsSuccess)
+            {
+                await GetAllItemsAsync();
+            }
+
+            if (result.IsFailure)
+            {
+                _error = result.Error.Message;
+            }
+        }        
     }
 }

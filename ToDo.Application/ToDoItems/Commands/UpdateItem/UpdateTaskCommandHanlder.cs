@@ -33,8 +33,7 @@ namespace ToDo.Application.ToDoItems.Commands.UpdateItem
                     return Result.Failure<Unit>(DomainErrors.ToDoList.NotFound(request.ToDoItemId));
                 }
 
-                ToDoItem.UpdateTitle(request.Title);
-                _toDoItemRepository.Add(ToDoItem);
+                ToDoItem.UpdateTitle(request.Title);                
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 
                 return Unit.Value;
