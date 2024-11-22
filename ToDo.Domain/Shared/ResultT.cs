@@ -14,12 +14,12 @@ public class Result<T> : Result
 
     public TResult Match<TResult>(
                Func<T, TResult> success,
-               Func<Error, TResult> failure) =>
-               IsSuccess ? success(_value!) : failure(Error);
+               Func<Result, TResult> failure) =>
+               IsSuccess ? success(_value!) : failure(this);
 
     public void Match(
                Action<T> success,
-               Action<Error> failure)
+               Action<Result> failure)
     {
         if(IsSuccess)
         {
@@ -27,10 +27,9 @@ public class Result<T> : Result
         }
         else
         {
-            failure(Error);
+            failure(this);
         }
-    }
-               
+    }               
 
     public static implicit operator Result<T>(T? value) => Create(value);
 }

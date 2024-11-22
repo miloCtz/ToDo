@@ -1,10 +1,12 @@
 ﻿@page "/"
+@using FluentValidation.Results
 @using MediatR
 @using ToDo.Application.ToDoItems.Commands.CompleteItem
 @using ToDo.Application.ToDoItems.Commands.CreateItem
 @using ToDo.Application.ToDoItems.Commands.DeleteItem
 @using ToDo.Application.ToDoItems.Commands.UpdateItem
 @using ToDo.Application.ToDoItems.Queries.GetItem
+@using ToDo.Domain.Shared
 @using ToDo.Web.Models.ToDoItems
 @inject ISender _sender
 @rendermode InteractiveServer
@@ -73,11 +75,8 @@
         var result = await _sender.Send(queryRequest);
 
         result.Match(
-            value =>
-            {
-                _toDoItems = result.Value.ToDoItems.Select(item => new ToDoItemModel(item.Id, item.Title, item.IsDone)).ToList();
-            },
-            error => _error = error.Message
+            value =>_toDoItems = result.Value.ToDoItems.Select(item => new ToDoItemModel(item.Id, item.Title, item.IsDone)).ToList(),
+            error => SetError(error)
         );
     }
 
@@ -92,7 +91,7 @@
                 _toDoItems.Add(new ToDoItemModel(value, _newToDo));
                 _newToDo = null;
             },
-            error => _error = error.Message
+            error => SetError(error)
         );
     }
 
@@ -103,7 +102,7 @@
 
         result.Match(
             value => _toDoItems.RemoveAll(item => item.Id == id),
-            error => _error = error.Message
+            error => SetError(error)
         );
     }
 
@@ -114,7 +113,7 @@
 
         result.Match(
            value => _toDoItems.Single(item => item.Id == id).Toggle(),
-           error => _error = error.Message
+           error => SetError(error)
        );
     }
 
@@ -127,7 +126,7 @@
 
             result.Match(
                 value => _toDoItems.Single(t => t.Id == item.Id).CompleteEdit(),
-                error => _error = error.Message
+                error => SetError(error)
             );
         }
     }
@@ -140,5 +139,14 @@
     protected void OnInput(ChangeEventArgs e, ToDoItemModel item)
     {
         item.Title = e.Value!.ToString()!;
+    }
+
+    protected void SetError(Result result)
+    {
+        _error = result switch
+        {
+            IValidationResult validationResult => validationResult.Errors[0].Message,
+            _ => result.Error.Message
+        };       
     }
 }

@@ -11,8 +11,17 @@
             Message = message;
         }
 
+        public Error(Exception ex)
+        {
+            Code = ex.GetType().Name;
+            Message = ex.Message;
+            Exception = ex;
+        }
+
         public string Code { get; init; }
         public string Message { get; init; }
-        public static Error FromException(Exception ex) => new(ex.GetType().Name, ex.Message);
+        public Exception? Exception { get; init; }
+        public bool IsException => Exception is not null;
+        public static Error FromException(Exception ex) => new(ex);
     }
 }
