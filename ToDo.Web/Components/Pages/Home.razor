@@ -21,37 +21,37 @@
 
     @if (!string.IsNullOrEmpty(_error))
     {
-        <section class="error-msg">
-          <span>Error: @_error</span>
-        </section>  
+            <section class="error-msg">
+              <span>Error: @_error</span>
+            </section>  
     }
 
 <section class="task-list">
     <ul>
-    @foreach(var item in _toDoItems)
-    {
-        <li class="task"> 
+            @foreach (var item in _toDoItems)
+            {
+            <li class="task"> 
 
-            @if (item.IsEditing)
-            {
+                    @if (item.IsEditing)
+                    {
+                        <div>
+                            <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
+                            <input class="update-task-input" type="text"  @oninput="(e) => OnInput(e, item)" @bind="item.Title" @onkeydown="(e) => UpdateAsync(e,item)">
+                        </div>   
+                    }
+                    else
+                    {
+                        <div>
+                            <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
+                            <p class="@(item.IsDone ? "complete" : string.Empty)">@item.Title</p>
+                        </div>        
+                    }                   
                 <div>
-                    <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
-                    <input class="update-task-input" type="text"  @oninput="(e) => OnInput(e, item)" @bind="item.Title" @onkeydown="(e) => UpdateAsync(e,item)">
-                </div>   
-            }
-            else
-            {
-                <div>
-                    <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
-                    <p class="@(item.IsDone ? "complete" : string.Empty)">@item.Title</p>
-                </div>        
-            }                   
-            <div>
-            <span @onclick="@(()=>UpdateItemAsycn(item))" class="material-icons">edit</span>
-            <span @onclick="@(()=>DeleteItemAsycn(item.Id))" class="material-icons">delete</span>
-            </div>
-        </li>  
-    }  
+                <span @onclick="@(()=>UpdateItemAsycn(item))" class="material-icons">edit</span>
+                <span @onclick="@(()=>DeleteItemAsycn(item.Id))" class="material-icons">delete</span>
+                </div>
+            </li>  
+            }  
     </ul>
 </section>
 
@@ -72,15 +72,13 @@
         var queryRequest = new GetAllToDoItemQuery();
         var result = await _sender.Send(queryRequest);
 
-        if (result.IsSuccess)
-        {
-            _toDoItems = result.Value.ToDoItems.Select(item => new ToDoItemModel(item.Id,item.Title, item.IsDone)).ToList();
-        }
-
-        if (result.IsFailure)
-        {
-            _error = result.Error.Message;
-        }
+        result.Match(
+            value =>
+            {
+                _toDoItems = result.Value.ToDoItems.Select(item => new ToDoItemModel(item.Id, item.Title, item.IsDone)).ToList();
+            },
+            error => _error = error.Message
+        );
     }
 
     protected async Task SaveItemAsync()
@@ -88,16 +86,14 @@
         var commandRequest = new CreateToDoItemCommand(_newToDo);
         var result = await _sender.Send(commandRequest);
 
-        if (result.IsSuccess)
-        {
-            _newToDo = null;
-            await GetAllItemsAsync();
-        }
-
-        if (result.IsFailure)
-        {
-            _error = result.Error.Message;
-        }
+        result.Match(
+            value =>
+            {
+                _toDoItems.Add(new ToDoItemModel(value, _newToDo));
+                _newToDo = null;
+            },
+            error => _error = error.Message
+        );
     }
 
     protected async Task DeleteItemAsycn(int id)
@@ -105,15 +101,10 @@
         var commandRequest = new DeleteTaskCommand(id);
         var result = await _sender.Send(commandRequest);
 
-        if (result.IsSuccess)
-        {
-            await GetAllItemsAsync();
-        }
-
-        if (result.IsFailure)
-        {
-            _error = result.Error.Message;
-        }
+        result.Match(
+            value => _toDoItems.RemoveAll(item => item.Id == id),
+            error => _error = error.Message
+        );
     }
 
     protected async Task CompleteItemAsync(int id)
@@ -121,14 +112,23 @@
         var commandRequest = new CompleteToDoItemCommand(id);
         var result = await _sender.Send(commandRequest);
 
-        if (result.IsSuccess)
-        {
-            await GetAllItemsAsync();
-        }
+        result.Match(
+           value => _toDoItems.Single(item => item.Id == id).Toggle(),
+           error => _error = error.Message
+       );
+    }
 
-        if (result.IsFailure)
+    protected async Task UpdateAsync(KeyboardEventArgs e, ToDoItemModel item)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
-            _error = result.Error.Message;
+            var command = new UpdateTaskCommand(item.Id, item.Title);
+            var result = await _sender.Send(command);
+
+            result.Match(
+                value => _toDoItems.Single(t => t.Id == item.Id).CompleteEdit(),
+                error => _error = error.Message
+            );
         }
     }
 
@@ -138,26 +138,7 @@
     }
 
     protected void OnInput(ChangeEventArgs e, ToDoItemModel item)
-    { 
-        item.Title = e.Value!.ToString()!;
-    }
-
-    protected async Task UpdateAsync(KeyboardEventArgs e, ToDoItemModel item)
     {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
-        {
-            var command = new UpdateTaskCommand(item.Id, item.Title);
-            var result  = await _sender.Send(command);            
-
-            if (result.IsSuccess)
-            {
-                await GetAllItemsAsync();
-            }
-
-            if (result.IsFailure)
-            {
-                _error = result.Error.Message;
-            }
-        }        
+        item.Title = e.Value!.ToString()!;
     }
 }

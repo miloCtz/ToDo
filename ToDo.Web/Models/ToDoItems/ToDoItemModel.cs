@@ -2,7 +2,7 @@
 
 public class ToDoItemModel
 {
-    public ToDoItemModel(int id, string title, bool isDone)
+    public ToDoItemModel(int id, string title, bool isDone = false)
     {
         Id = id;
         Title = title;
@@ -16,4 +16,5 @@ public class ToDoItemModel
 
     public void Edit() => IsEditing = true;
     public void CompleteEdit() => IsEditing = false;
+    public void Toggle() => IsDone = !IsDone;
 }
