@@ -1,10 +1,4 @@
-using FluentValidation;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Scrutor;
-using Serilog;
-using ToDo.Application.Behaviors;
-using ToDo.Data;
+using ToDo.Infrastructure;
 using ToDo.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,33 +8,9 @@ builder.Services
     .AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Host.UseSerilog((context, configuration) =>
-    configuration.ReadFrom.Configuration(context.Configuration));
+builder.Host.AddLogProvider();
 
-builder
-    .Services
-    .Scan(
-        selector => selector
-            .FromAssemblies(
-                ToDo.Data.AssemblyReference.Assembly)
-            .AddClasses(false)
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(ToDo.Application.AssemblyReference.Assembly));
-
-builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
-
-builder.Services.AddValidatorsFromAssembly(
-    ToDo.Application.AssemblyReference.Assembly,
-    includeInternalTypes: true);
-
-builder.Services.AddDbContext<DatabaseContext>(
-    (sp, optionsBuilder) =>
-    {
-        optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("ConnetionString"));
-    });
+builder.Services.AddToDoService();
 
 var app = builder.Build();
 
