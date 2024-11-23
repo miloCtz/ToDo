@@ -22,9 +22,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDo.Data", "ToDo.Data\ToDo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDo.Web", "ToDo.Web\ToDo.Web.csproj", "{F0601328-5BC6-4C32-8E10-45C4E06448C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDo.Web.Api", "ToDo.Web.Api\ToDo.Web.Api.csproj", "{3C0CF30C-8066-4DE0-8DBC-4AA0DFCEF7F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDo.Web.Api", "ToDo.Web.Api\ToDo.Web.Api.csproj", "{3C0CF30C-8066-4DE0-8DBC-4AA0DFCEF7F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDo.Infrastructure", "ToDo.Infrastructure\ToDo.Infrastructure.csproj", "{62E102BD-A6CE-4F90-AF9C-ED9E89151F31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDo.Infrastructure", "ToDo.Infrastructure\ToDo.Infrastructure.csproj", "{62E102BD-A6CE-4F90-AF9C-ED9E89151F31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDo.Web.Tests", "ToDo.Web.Tests\ToDo.Web.Tests.csproj", "{6FEFB074-D01A-42CA-9CD6-A891D8239296}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +62,10 @@ Global
 		{62E102BD-A6CE-4F90-AF9C-ED9E89151F31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62E102BD-A6CE-4F90-AF9C-ED9E89151F31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62E102BD-A6CE-4F90-AF9C-ED9E89151F31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FEFB074-D01A-42CA-9CD6-A891D8239296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FEFB074-D01A-42CA-9CD6-A891D8239296}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FEFB074-D01A-42CA-9CD6-A891D8239296}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FEFB074-D01A-42CA-9CD6-A891D8239296}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 		{F0601328-5BC6-4C32-8E10-45C4E06448C1} = {C1B32C4F-9A6C-4C52-AF95-6AA751A6F564}
 		{3C0CF30C-8066-4DE0-8DBC-4AA0DFCEF7F7} = {C1B32C4F-9A6C-4C52-AF95-6AA751A6F564}
 		{62E102BD-A6CE-4F90-AF9C-ED9E89151F31} = {C1B32C4F-9A6C-4C52-AF95-6AA751A6F564}
+		{6FEFB074-D01A-42CA-9CD6-A891D8239296} = {6B33A61E-8BC0-4B35-AF47-D11454EB3F23}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {15813C82-E9FB-43E7-BDF5-92E21147927A}

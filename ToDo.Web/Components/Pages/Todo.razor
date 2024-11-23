@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/todo"
 @using FluentValidation.Results
 @using MediatR
 @using ToDo.Application.ToDoItems.Commands.CompleteItem
@@ -17,42 +17,42 @@
 
 <h1>To Do</h1>
 <section class="new-task">
-    <span id="add-button" @onclick="SaveItemAsync" class="material-icons">add</span>
+    <span @onclick="SaveItemAsync" class="material-icons">add</span>
     <input class="new-task-input" type="text" @bind="_newToDo" placeholder="New Task">
 </section>
 
     @if (!string.IsNullOrEmpty(_error))
     {
-            <section class="error-msg">
-              <span>Error: @_error</span>
-            </section>  
+                <section class="error-msg">
+                  <span>Error: @_error</span>
+                </section>  
     }
 
 <section class="task-list">
     <ul>
             @foreach (var item in _toDoItems)
             {
-            <li class="task"> 
+                <li class="task"> 
 
                     @if (item.IsEditing)
                     {
-                        <div>
-                            <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
-                            <input class="update-task-input" type="text"  @oninput="(e) => OnInput(e, item)" @bind="item.Title" @onkeydown="(e) => UpdateAsync(e,item)">
-                        </div>   
+                                <div>
+                                    <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
+                                    <input class="update-task-input" type="text"  @oninput="(e) => OnInput(e, item)" @bind="item.Title" @onkeydown="(e) => UpdateAsync(e,item)">
+                                </div>   
                     }
                     else
                     {
-                        <div>
-                            <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
-                            <p class="@(item.IsDone ? "complete" : string.Empty)">@item.Title</p>
-                        </div>        
+                                <div>
+                                    <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
+                                    <p class="@(item.IsDone ? "complete" : string.Empty)">@item.Title</p>
+                                </div>        
                     }                   
-                <div>
-                <span @onclick="@(()=>UpdateItemAsycn(item))" class="material-icons edit">edit</span>
-                <span @onclick="@(()=>DeleteItemAsycn(item.Id))" class="material-icons delete">delete</span>
-                </div>
-            </li>  
+                    <div>
+                    <span @onclick="@(()=>UpdateItemAsycn(item))" class="material-icons">edit</span>
+                    <span @onclick="@(()=>DeleteItemAsycn(item.Id))" class="material-icons">delete</span>
+                    </div>
+                </li>  
             }  
     </ul>
 </section>
@@ -78,7 +78,7 @@
         var result = await _sender.Send(queryRequest);
 
         result.Match(
-            value =>_toDoItems = result.Value.ToDoItems.Select(item => new ToDoItemModel(item.Id, item.Title, item.IsDone)).ToList(),
+            value => _toDoItems = result.Value.ToDoItems.Select(item => new ToDoItemModel(item.Id, item.Title, item.IsDone)).ToList(),
             error => SetError(error)
         );
     }
@@ -136,7 +136,7 @@
 
     protected void UpdateItemAsycn(ToDoItemModel item)
     {
-        if(_editingItem is not null)
+        if (_editingItem is not null)
         {
             _editingItem.Title = _originalTitle!;
             _editingItem.CompleteEdit();
@@ -158,6 +158,6 @@
         {
             IValidationResult validationResult => validationResult.Errors[0].Message,
             _ => result.Error.Message
-        };       
+        };
     }
 }
