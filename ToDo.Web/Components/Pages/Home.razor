@@ -37,14 +37,14 @@
                     @if (item.IsEditing)
                     {
                         <div>
-                            <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
+                            <input class="isDone" type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
                             <input class="update-task-input" type="text"  @oninput="(e) => OnInput(e, item)" @bind="item.Title" @onkeydown="(e) => UpdateAsync(e,item)">
                         </div>   
                     }
                     else
                     {
                         <div>
-                            <input type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
+                            <input class="isDone" type="checkbox" checked="@item.IsDone" @onchange="@(()=>CompleteItemAsync(item.Id))">
                             <p class="@(item.IsDone ? "complete" : string.Empty)">@item.Title</p>
                         </div>        
                     }                   

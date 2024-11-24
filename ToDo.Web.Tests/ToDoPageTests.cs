@@ -3,6 +3,7 @@ using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using ToDo.Application.ToDoItems.Commands.CompleteItem;
 using ToDo.Application.ToDoItems.Commands.CreateItem;
 using ToDo.Application.ToDoItems.Commands.DeleteItem;
 using ToDo.Application.ToDoItems.Queries.GetItem;
@@ -203,6 +204,70 @@ namespace ToDo.Web.Tests
             items.Should().NotBeEmpty();
             items.Count.Should().Be(2);
             errorMessage.Should().NotBeNull();
+            errorMessage.TextContent.Should().Contain("Exception");
+        }
+
+        [Fact]
+        public void CompleteItemAsync_Should_Success()
+        {
+            //Arrange
+            var response = new ToDoItemAllResponse(_items);
+            var result = Result.Success(response);
+
+            _senderMock
+                .Setup(x => x.Send(It.IsAny<GetAllToDoItemQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(result);
+
+            var addResult = Result.Success(Unit.Value);
+
+            _senderMock
+                .Setup(x => x.Send(It.IsAny<CompleteToDoItemCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(addResult);
+
+            Services.AddSingleton(_senderMock.Object);
+
+            //Act
+            var component = RenderComponent<Home>();
+            var checkbox = component.Find(AppCssSelectors.IsDoneCheckboxElement);
+            checkbox.Change("");
+            var items = component.FindAll(AppCssSelectors.ToDoElements);
+            var completeItems = component.FindAll(AppCssSelectors.CompleteElement);
+
+            //Act                        
+            items.Count.Should().Be(2);
+            completeItems.Count.Should().Be(2);
+        }
+
+        [Fact]
+        public void CompleteItemAsync_Should_Fail()
+        {
+            //Arrange
+            var response = new ToDoItemAllResponse(_items);
+            var result = Result.Success(response);
+
+            _senderMock
+                .Setup(x => x.Send(It.IsAny<GetAllToDoItemQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(result);
+
+            var addResult = Result.Failure<Unit>(new Exception("Exception"));
+
+            _senderMock
+                .Setup(x => x.Send(It.IsAny<CompleteToDoItemCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(addResult);
+
+            Services.AddSingleton(_senderMock.Object);
+
+            //Act
+            var component = RenderComponent<Home>();
+            var checkbox = component.Find(AppCssSelectors.IsDoneCheckboxElement);
+            checkbox.Change("");
+            var items = component.FindAll(AppCssSelectors.ToDoElements);
+            var completeItems = component.FindAll(AppCssSelectors.CompleteElement);
+            var errorMessage = component.Find(AppCssSelectors.ErrorElement);
+
+            //Act                        
+            items.Count.Should().Be(2);
+            completeItems.Count.Should().Be(1);
             errorMessage.TextContent.Should().Contain("Exception");
         }
     }
